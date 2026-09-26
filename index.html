@@ -11,16 +11,6 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    :root {
-      --coral: #ff6b9d;
-      --peach: #ffa07a;
-      --sun: #ffd166;
-      --mint: #06d6a0;
-      --sky: #4cc9f0;
-      --violet: #a06cd5;
-      --deep: #1e2b3c;
-    }
-
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
@@ -53,7 +43,106 @@
       border: 1px solid rgba(255, 255, 255, 0.8);
     }
 
-    /* Header */
+    /* Passcode gate */
+    .gate {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(145deg, rgba(254, 246, 251, 0.97), rgba(238, 246, 255, 0.97));
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1.5rem;
+    }
+
+    .gate.hidden { display: none; }
+
+    .gate-card {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 2.5rem;
+      padding: 2.5rem;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 30px 60px rgba(160, 108, 213, 0.2);
+    }
+
+    .gate-card i.gate-icon {
+      font-size: 3rem;
+      background: linear-gradient(135deg, #ff6b9d, #a06cd5, #4cc9f0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .gate-card h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(120deg, #ff6b9d, #a06cd5);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .gate-card p {
+      color: #6a7f94;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .gate-card input {
+      width: 100%;
+      padding: 1rem 1.3rem;
+      border-radius: 1.5rem;
+      border: 1.5px solid #e2d4f0;
+      background: white;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: center;
+      outline: none;
+      margin-bottom: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .gate-card input:focus {
+      border-color: #a06cd5;
+      box-shadow: 0 0 0 4px rgba(160, 108, 213, 0.18);
+    }
+
+    .gate-card button {
+      width: 100%;
+      padding: 1rem;
+      border-radius: 1.5rem;
+      border: none;
+      background: linear-gradient(135deg, #ff6b9d, #a06cd5);
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 12px 24px -8px rgba(255, 107, 157, 0.5);
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .gate-card button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 30px -8px rgba(160, 108, 213, 0.6);
+    }
+
+    .gate-error {
+      color: #ff6b9d;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+      min-height: 1.2em;
+    }
+
     .header {
       display: flex;
       flex-wrap: wrap;
@@ -118,8 +207,13 @@
     }
 
     .shared-badge i { color: white; }
+    .shared-badge.live i { animation: pulse 1.6s ease-in-out infinite; }
 
-    /* Stats row */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
     .stats-row {
       display: flex;
       gap: 1rem;
@@ -156,7 +250,6 @@
 
     .stat-card i { font-size: 1.3rem; }
 
-    /* Form Card */
     .form-card {
       background: linear-gradient(135deg, rgba(255, 107, 157, 0.08), rgba(160, 108, 213, 0.08), rgba(76, 201, 240, 0.08));
       backdrop-filter: blur(12px);
@@ -182,9 +275,7 @@
       z-index: 0;
     }
 
-    @keyframes rotate {
-      100% { transform: rotate(360deg); }
-    }
+    @keyframes rotate { 100% { transform: rotate(360deg); } }
 
     .form-card > * { position: relative; z-index: 1; }
 
@@ -198,11 +289,7 @@
     @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
 
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
+    .input-group { display: flex; flex-direction: column; gap: 0.4rem; }
 
     .input-group label {
       font-size: 0.8rem;
@@ -237,10 +324,7 @@
       background: white;
     }
 
-    .input-group input::placeholder {
-      color: #b9a8d0;
-      font-weight: 400;
-    }
+    .input-group input::placeholder { color: #b9a8d0; font-weight: 400; }
 
     .btn-primary {
       background: linear-gradient(135deg, #ff6b9d 0%, #a06cd5 100%);
@@ -268,8 +352,8 @@
     }
 
     .btn-primary:active { transform: translateY(1px); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-    /* Appointments list */
     .list-header {
       display: flex;
       justify-content: space-between;
@@ -297,11 +381,7 @@
       border: 1px solid rgba(160, 108, 213, 0.2);
     }
 
-    .appointments-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
+    .appointments-grid { display: flex; flex-direction: column; gap: 0.75rem; }
 
     .appointment-item {
       background: rgba(255, 255, 255, 0.8);
@@ -323,23 +403,15 @@
     .appointment-item::before {
       content: '';
       position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
+      left: 0; top: 0; bottom: 0;
       width: 6px;
       background: linear-gradient(180deg, #ff6b9d, #a06cd5);
       opacity: 0.9;
     }
 
-    .appointment-item[data-category="doctor"]::before {
-      background: linear-gradient(180deg, #4cc9f0, #06d6a0);
-    }
-    .appointment-item[data-category="kindergarten"]::before {
-      background: linear-gradient(180deg, #ffd166, #ff6b9d);
-    }
-    .appointment-item[data-category="other"]::before {
-      background: linear-gradient(180deg, #a06cd5, #4cc9f0);
-    }
+    .appointment-item[data-category="doctor"]::before { background: linear-gradient(180deg, #4cc9f0, #06d6a0); }
+    .appointment-item[data-category="kindergarten"]::before { background: linear-gradient(180deg, #ffd166, #ff6b9d); }
+    .appointment-item[data-category="other"]::before { background: linear-gradient(180deg, #a06cd5, #4cc9f0); }
 
     @keyframes fadeSlide {
       from { opacity: 0; transform: translateY(8px); }
@@ -466,6 +538,17 @@
       color: transparent;
     }
 
+    .loading-state {
+      padding: 3rem;
+      text-align: center;
+      color: #a06cd5;
+      font-weight: 600;
+    }
+
+    .loading-state i { font-size: 2rem; margin-bottom: 0.8rem; display: block; animation: spin 1s linear infinite; }
+
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
     .footer-note {
       margin-top: 1.8rem;
       text-align: center;
@@ -485,18 +568,29 @@
   </style>
 </head>
 <body>
+
+  <!-- Passcode gate -->
+  <div class="gate" id="gate">
+    <div class="gate-card">
+      <i class="fas fa-lock gate-icon"></i>
+      <h2>Family Agenda</h2>
+      <p>Enter the shared family passcode to continue</p>
+      <input type="password" id="passcodeInput" placeholder="Passcode" autocomplete="off">
+      <button id="passcodeBtn">Unlock</button>
+      <div class="gate-error" id="gateError"></div>
+    </div>
+  </div>
+
   <div class="app-container">
     <div class="header">
       <div class="title-section">
-        <h1>
-          <i class="fas fa-calendar-heart"></i> Shared Agenda
-        </h1>
+        <h1><i class="fas fa-calendar-heart"></i> Shared Agenda</h1>
         <div class="subhead">
           <i class="fas fa-user-friends"></i> For you and your wife — everything in one place
         </div>
       </div>
-      <div class="shared-badge">
-        <i class="fas fa-share-alt"></i> Shared
+      <div class="shared-badge live" id="syncBadge">
+        <i class="fas fa-circle"></i> Live
       </div>
     </div>
 
@@ -534,247 +628,189 @@
       <span id="listCount">0 entries</span>
     </div>
 
-    <div id="appointmentsContainer" class="appointments-grid"></div>
+    <div id="appointmentsContainer" class="appointments-grid">
+      <div class="loading-state"><i class="fas fa-spinner"></i> Connecting…</div>
+    </div>
 
     <div class="footer-note">
-      <i class="fas fa-heart"></i> Made for the two of you
+      <i class="fas fa-heart"></i> Synced live between your devices
     </div>
   </div>
 
-  <script>
-    (function() {
-      const STORAGE_KEY = 'shared_appointments_v1';
+  <script type="module">
+    // ─────────────────────────────────────────────
+    // 1. Firebase setup
+    // ─────────────────────────────────────────────
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore, collection, onSnapshot,
+      addDoc, deleteDoc, doc, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-      const titleInput = document.getElementById('titleInput');
-      const categoryInput = document.getElementById('categoryInput');
-      const dateInput = document.getElementById('dateInput');
-      const addBtn = document.getElementById('addBtn');
-      const container = document.getElementById('appointmentsContainer');
-      const totalCountSpan = document.getElementById('totalCount');
-      const upcomingCountSpan = document.getElementById('upcomingCount');
-      const listCountSpan = document.getElementById('listCount');
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkWWc2ml0zyVACh4jJSLQE-MySy4oPFUI",
+      authDomain: "family-agenda-a6dd9.firebaseapp.com",
+      projectId: "family-agenda-a6dd9",
+      storageBucket: "family-agenda-a6dd9.firebasestorage.app",
+      messagingSenderId: "181941205063",
+      appId: "1:181941205063:web:45cc5b0c2f09c465b85962"
+    };
 
-      function getTodayString() {
-        const d = new Date();
-        const year = d.getFullYear();
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Shared family passcode — change this to whatever you like
+    const FAMILY_PASSCODE = "shem-family-2026";
+    const PASSCODE_KEY = "family_agenda_passcode_ok";
+
+    // ─────────────────────────────────────────────
+    // 2. DOM refs
+    // ─────────────────────────────────────────────
+    const gate = document.getElementById('gate');
+    const passcodeInput = document.getElementById('passcodeInput');
+    const passcodeBtn = document.getElementById('passcodeBtn');
+    const gateError = document.getElementById('gateError');
+
+    const titleInput = document.getElementById('titleInput');
+    const categoryInput = document.getElementById('categoryInput');
+    const dateInput = document.getElementById('dateInput');
+    const addBtn = document.getElementById('addBtn');
+    const container = document.getElementById('appointmentsContainer');
+    const totalCountSpan = document.getElementById('totalCount');
+    const upcomingCountSpan = document.getElementById('upcomingCount');
+    const listCountSpan = document.getElementById('listCount');
+    const syncBadge = document.getElementById('syncBadge');
+
+    // ─────────────────────────────────────────────
+    // 3. Passcode gate
+    // ─────────────────────────────────────────────
+    function checkPasscode() {
+      if (localStorage.getItem(PASSCODE_KEY) === 'yes') {
+        gate.classList.add('hidden');
+        startApp();
+      } else {
+        gate.classList.remove('hidden');
+        passcodeInput.focus();
       }
+    }
 
-      dateInput.value = getTodayString();
-
-      function loadAppointments() {
-        try {
-          const stored = localStorage.getItem(STORAGE_KEY);
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            if (Array.isArray(parsed)) return parsed;
-          }
-        } catch (e) {
-          console.warn('Failed to load appointments', e);
-        }
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const nextWeek = new Date(today);
-        nextWeek.setDate(nextWeek.getDate() + 7);
-
-        return [
-          { id: 'sample1', title: 'Pediatrician checkup', category: 'doctor', date: tomorrow.toISOString().split('T')[0] },
-          { id: 'sample2', title: 'Kindergarten parent evening', category: 'kindergarten', date: nextWeek.toISOString().split('T')[0] },
-          { id: 'sample3', title: 'Dentist (both)', category: 'doctor', date: today.toISOString().split('T')[0] },
-        ];
+    passcodeBtn.addEventListener('click', () => {
+      const val = passcodeInput.value.trim();
+      if (val === FAMILY_PASSCODE) {
+        localStorage.setItem(PASSCODE_KEY, 'yes');
+        gate.classList.add('hidden');
+        startApp();
+      } else {
+        gateError.textContent = 'Incorrect passcode. Try again.';
+        passcodeInput.value = '';
+        passcodeInput.focus();
       }
+    });
 
-      function saveAppointments(appointments) {
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(appointments));
-        } catch (e) {
-          console.warn('Failed to save appointments', e);
-        }
-      }
+    passcodeInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') passcodeBtn.click();
+    });
 
-      let appointments = loadAppointments();
+    // ─────────────────────────────────────────────
+    // 4. Helpers
+    // ─────────────────────────────────────────────
+    function getTodayString() {
+      const d = new Date();
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
 
-      function formatDate(dateStr) {
-        if (!dateStr) return 'No date';
-        const [year, month, day] = dateStr.split('-').map(Number);
-        const date = new Date(year, month - 1, day);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const compareDate = new Date(year, month - 1, day);
+    function formatDate(dateStr) {
+      if (!dateStr) return 'No date';
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const compareDate = new Date(year, month - 1, day);
 
-        if (compareDate.getTime() === today.getTime()) return 'Today';
-        if (compareDate.getTime() === tomorrow.getTime()) return 'Tomorrow';
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      }
+      if (compareDate.getTime() === today.getTime()) return 'Today';
+      if (compareDate.getTime() === tomorrow.getTime()) return 'Tomorrow';
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
 
-      function isUpcoming(dateStr) {
-        if (!dateStr) return false;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const [year, month, day] = dateStr.split('-').map(Number);
-        const apptDate = new Date(year, month - 1, day);
-        return apptDate >= today;
-      }
+    function isUpcoming(dateStr) {
+      if (!dateStr) return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const apptDate = new Date(year, month - 1, day);
+      return apptDate >= today;
+    }
 
-      function render() {
-        const sorted = [...appointments].sort((a, b) => {
-          if (!a.date) return 1;
-          if (!b.date) return -1;
-          return a.date.localeCompare(b.date);
-        });
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
 
-        const total = appointments.length;
-        const upcoming = appointments.filter(a => isUpcoming(a.date)).length;
-        totalCountSpan.textContent = total;
-        upcomingCountSpan.textContent = upcoming;
-        listCountSpan.textContent = total + (total === 1 ? ' entry' : ' entries');
+    // ─────────────────────────────────────────────
+    // 5. App state
+    // ─────────────────────────────────────────────
+    let appointments = [];
+    let unsubscribe = null;
 
-        container.innerHTML = '';
-
-        if (sorted.length === 0) {
-          const emptyDiv = document.createElement('div');
-          emptyDiv.className = 'empty-state';
-          emptyDiv.innerHTML = `
-            <i class="fas fa-calendar-plus"></i>
-            <p style="font-size: 1.1rem; margin-bottom: 0.3rem; color: #6a4f9c; font-weight: 700;">No appointments yet</p>
-            <p style="font-size: 0.9rem; opacity: 0.85;">Add your first doctor visit, kindergarten event, or any date.</p>
-          `;
-          container.appendChild(emptyDiv);
-          return;
-        }
-
-        sorted.forEach(appt => {
-          const item = document.createElement('div');
-          item.className = 'appointment-item';
-          item.dataset.id = appt.id;
-          item.dataset.category = appt.category || 'other';
-
-          let categoryIcon = 'fa-calendar-alt';
-          let categoryClass = 'other';
-          let categoryLabel = 'Other';
-
-          if (appt.category === 'doctor') {
-            categoryIcon = 'fa-stethoscope';
-            categoryClass = 'doctor';
-            categoryLabel = 'Doctor';
-          } else if (appt.category === 'kindergarten') {
-            categoryIcon = 'fa-child';
-            categoryClass = 'kindergarten';
-            categoryLabel = 'Kindergarten';
-          }
-
-          item.innerHTML = `
-            <div class="appointment-icon ${categoryClass}">
-              <i class="fas ${categoryIcon}"></i>
-            </div>
-            <div class="appointment-details">
-              <span class="appointment-title">${escapeHtml(appt.title) || 'Untitled'}</span>
-              <div class="appointment-meta">
-                <span class="meta-tag"><i class="fas fa-calendar"></i> ${formatDate(appt.date)}</span>
-                <span class="category-badge ${categoryClass}">${categoryLabel}</span>
-              </div>
-            </div>
-            <button class="btn-delete" title="Delete appointment" data-id="${appt.id}">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          `;
-
-          container.appendChild(item);
-        });
-
-        document.querySelectorAll('.btn-delete').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const id = btn.dataset.id;
-            deleteAppointment(id);
-          });
-        });
-      }
-
-      function escapeHtml(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-      }
-
-      function addAppointment() {
-        const title = titleInput.value.trim();
-        const category = categoryInput.value;
-        const date = dateInput.value;
-
-        if (!title) {
-          titleInput.style.borderColor = '#ff6b9d';
-          titleInput.style.boxShadow = '0 0 0 4px rgba(255, 107, 157, 0.25)';
-          setTimeout(() => {
-            titleInput.style.borderColor = '#e2d4f0';
-            titleInput.style.boxShadow = 'none';
-          }, 1500);
-          titleInput.focus();
-          return;
-        }
-
-        if (!date) {
-          dateInput.style.borderColor = '#ff6b9d';
-          dateInput.style.boxShadow = '0 0 0 4px rgba(255, 107, 157, 0.25)';
-          setTimeout(() => {
-            dateInput.style.borderColor = '#e2d4f0';
-            dateInput.style.boxShadow = 'none';
-          }, 1500);
-          dateInput.focus();
-          return;
-        }
-
-        const newAppt = {
-          id: 'appt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
-          title: title,
-          category: category,
-          date: date,
-        };
-
-        appointments.push(newAppt);
-        saveAppointments(appointments);
-        render();
-
-        titleInput.value = '';
-        titleInput.focus();
-      }
-
-      function deleteAppointment(id) {
-        appointments = appointments.filter(appt => appt.id !== id);
-        saveAppointments(appointments);
-        render();
-      }
-
-      addBtn.addEventListener('click', addAppointment);
-      titleInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          addAppointment();
-        }
+    function render() {
+      const sorted = [...appointments].sort((a, b) => {
+        if (!a.date) return 1;
+        if (!b.date) return -1;
+        return a.date.localeCompare(b.date);
       });
 
-      window.addEventListener('storage', (e) => {
-        if (e.key === STORAGE_KEY) {
-          try {
-            const newData = JSON.parse(e.newValue);
-            if (Array.isArray(newData)) {
-              appointments = newData;
-              render();
-            }
-          } catch (err) {
-            console.warn('Error syncing storage', err);
-          }
-        }
-      });
+      const total = appointments.length;
+      const upcoming = appointments.filter(a => isUpcoming(a.date)).length;
+      totalCountSpan.textContent = total;
+      upcomingCountSpan.textContent = upcoming;
+      listCountSpan.textContent = total + (total === 1 ? ' entry' : ' entries');
 
-      render();
-    })();
-  </script>
-</body>
-</html>
+      container.innerHTML = '';
+
+      if (sorted.length === 0) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'empty-state';
+        emptyDiv.innerHTML = `
+          <i class="fas fa-calendar-plus"></i>
+          <p style="font-size: 1.1rem; margin-bottom: 0.3rem; color: #6a4f9c; font-weight: 700;">No appointments yet</p>
+          <p style="font-size: 0.9rem; opacity: 0.85;">Add your first doctor visit, kindergarten event, or any date.</p>
+        `;
+        container.appendChild(emptyDiv);
+        return;
+      }
+
+      sorted.forEach(appt => {
+        const item = document.createElement('div');
+        item.className = 'appointment-item';
+        item.dataset.id = appt.id;
+        item.dataset.category = appt.category || 'other';
+
+        let categoryIcon = 'fa-calendar-alt';
+        let categoryClass = 'other';
+        let categoryLabel = 'Other';
+
+        if (appt.category === 'doctor') {
+          categoryIcon = 'fa-stethoscope';
+          categoryClass = 'doctor';
+          categoryLabel = 'Doctor';
+        } else if (appt.category === 'kindergarten') {
+          categoryIcon = 'fa-child';
+          categoryClass = 'kindergarten';
+          categoryLabel = 'Kindergarten';
+        }
+
+        item.innerHTML = `
+          <div class="appointment-icon ${categoryClass}">
+            <i class="fas ${categoryIcon}"></i>
+          </div>
+          <div class="appointment-details">
+            <span class="appointment-title">${escapeHtml(appt.title) || 'Untitled'}</span>
+            <div class="appointment-meta">
+              <span class="meta-t
