@@ -641,12 +641,11 @@
     // ─────────────────────────────────────────────
     // 1. Firebase setup
     // ─────────────────────────────────────────────
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getFirestore, collection, onSnapshot,
-      addDoc, deleteDoc, doc, serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+    import { initializeApp } from "https://esm.sh/firebase@10.12.2/app";
+import {
+  getFirestore, collection, onSnapshot,
+  addDoc, deleteDoc, doc, serverTimestamp
+} from "https://esm.sh/firebase@10.12.2/firestore";
     const firebaseConfig = {
       apiKey: "AIzaSyAkWWc2ml0zyVACh4jJSLQE-MySy4oPFUI",
       authDomain: "family-agenda-a6dd9.firebaseapp.com",
