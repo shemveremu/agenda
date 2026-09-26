@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Shared Calendar · Appointments</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --coral: #ff6b9d;
+      --peach: #ffa07a;
+      --sun: #ffd166;
+      --mint: #06d6a0;
+      --sky: #4cc9f0;
+      --violet: #a06cd5;
+      --deep: #1e2b3c;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      color: #1e2b3c;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(255, 107, 157, 0.25), transparent 45%),
+        radial-gradient(circle at 90% 15%, rgba(76, 201, 240, 0.28), transparent 45%),
+        radial-gradient(circle at 20% 90%, rgba(160, 108, 213, 0.25), transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(6, 214, 160, 0.25), transparent 45%),
+        linear-gradient(145deg, #fef6fb 0%, #eef6ff 100%);
+      background-attachment: fixed;
+    }
+
+    .app-container {
+      max-width: 1200px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: 3rem;
+      box-shadow:
+        0 30px 60px rgba(30, 43, 60, 0.12),
+        0 10px 30px rgba(160, 108, 213, 0.08),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+      padding: 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2.5rem;
+      gap: 1rem;
+    }
+
+    .title-section h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(120deg, #ff6b9d 0%, #a06cd5 40%, #4cc9f0 75%, #06d6a0 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background-size: 200% 200%;
+      animation: hueShift 8s ease infinite;
+    }
+
+    @keyframes hueShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .title-section h1 i {
+      font-size: 2rem;
+      background: linear-gradient(135deg, #ff6b9d, #a06cd5);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subhead {
+      font-size: 1rem;
+      color: #6a7f94;
+      font-weight: 500;
+      margin-top: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .subhead i { color: #a06cd5; }
+
+    .shared-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #ff6b9d, #a06cd5);
+      padding: 0.65rem 1.3rem;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 8px 20px -6px rgba(160, 108, 213, 0.5);
+    }
+
+    .shared-badge i { color: white; }
+
+    /* Stats row */
+    .stats-row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 1.8rem;
+      padding: 1rem 1.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-weight: 600;
+      color: #1e3a4e;
+      box-shadow: 0 8px 20px -10px rgba(30, 43, 60, 0.2);
+      transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover { transform: translateY(-2px); }
+
+    .stat-card:nth-child(1) {
+      background: linear-gradient(135deg, rgba(255, 107, 157, 0.18), rgba(255, 160, 122, 0.18));
+    }
+    .stat-card:nth-child(1) i { color: #ff6b9d; }
+
+    .stat-card:nth-child(2) {
+      background: linear-gradient(135deg, rgba(76, 201, 240, 0.18), rgba(6, 214, 160, 0.18));
+    }
+    .stat-card:nth-child(2) i { color: #06d6a0; }
+
+    .stat-card i { font-size: 1.3rem; }
+
+    /* Form Card */
+    .form-card {
+      background: linear-gradient(135deg, rgba(255, 107, 157, 0.08), rgba(160, 108, 213, 0.08), rgba(76, 201, 240, 0.08));
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 2rem;
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 8px 24px rgba(160, 108, 213, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 0deg, rgba(255,107,157,0.05), rgba(160,108,213,0.05), rgba(76,201,240,0.05), rgba(6,214,160,0.05), rgba(255,107,157,0.05));
+      animation: rotate 20s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes rotate {
+      100% { transform: rotate(360deg); }
+    }
+
+    .form-card > * { position: relative; z-index: 1; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 1rem;
+      align-items: end;
+    }
+
+    @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .input-group label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #627a91;
+      padding-left: 0.3rem;
+    }
+
+    .input-group label i { color: #a06cd5; }
+
+    .input-group input,
+    .input-group select {
+      padding: 0.9rem 1.2rem;
+      border-radius: 1.5rem;
+      border: 1.5px solid #e2d4f0;
+      background: rgba(255, 255, 255, 0.95);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #1e2b3c;
+      transition: all 0.2s ease;
+      outline: none;
+      box-shadow: 0 2px 6px rgba(160, 108, 213, 0.05);
+    }
+
+    .input-group input:focus,
+    .input-group select:focus {
+      border-color: #a06cd5;
+      box-shadow: 0 0 0 4px rgba(160, 108, 213, 0.18);
+      background: white;
+    }
+
+    .input-group input::placeholder {
+      color: #b9a8d0;
+      font-weight: 400;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ff6b9d 0%, #a06cd5 100%);
+      border: none;
+      padding: 0.95rem 2rem;
+      border-radius: 1.5rem;
+      font-weight: 700;
+      font-size: 1rem;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 12px 24px -8px rgba(255, 107, 157, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 30px -8px rgba(160, 108, 213, 0.6);
+      filter: brightness(1.05);
+    }
+
+    .btn-primary:active { transform: translateY(1px); }
+
+    /* Appointments list */
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+      padding: 0 0.3rem;
+    }
+
+    .list-header h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #1d2f40;
+    }
+
+    .list-header h2 i { color: #4cc9f0; margin-right: 8px; }
+
+    .list-header span {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #7a4fa3;
+      background: rgba(160, 108, 213, 0.12);
+      padding: 0.35rem 1rem;
+      border-radius: 2rem;
+      border: 1px solid rgba(160, 108, 213, 0.2);
+    }
+
+    .appointments-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .appointment-item {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 1.8rem;
+      padding: 1.2rem 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 12px rgba(160, 108, 213, 0.06);
+      transition: all 0.25s ease;
+      animation: fadeSlide 0.35s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .appointment-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      background: linear-gradient(180deg, #ff6b9d, #a06cd5);
+      opacity: 0.9;
+    }
+
+    .appointment-item[data-category="doctor"]::before {
+      background: linear-gradient(180deg, #4cc9f0, #06d6a0);
+    }
+    .appointment-item[data-category="kindergarten"]::before {
+      background: linear-gradient(180deg, #ffd166, #ff6b9d);
+    }
+    .appointment-item[data-category="other"]::before {
+      background: linear-gradient(180deg, #a06cd5, #4cc9f0);
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .appointment-item:hover {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 12px 28px -10px rgba(160, 108, 213, 0.25);
+      border-color: rgba(255, 255, 255, 1);
+      transform: translateX(4px);
+    }
+
+    .appointment-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.15), inset 0 1px 4px rgba(255, 255, 255, 0.4);
+    }
+
+    .appointment-icon.doctor { background: linear-gradient(135deg, #4cc9f0, #06d6a0); }
+    .appointment-icon.kindergarten { background: linear-gradient(135deg, #ffd166, #ff6b9d); }
+    .appointment-icon.other { background: linear-gradient(135deg, #a06cd5, #4cc9f0); }
+
+    .appointment-details {
+      flex: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem 2rem;
+    }
+
+    .appointment-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #1b2c3d;
+      letter-spacing: -0.01em;
+      min-width: 140px;
+    }
+
+    .appointment-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .meta-tag {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #46647e;
+      background: rgba(230, 240, 248, 0.8);
+      padding: 0.35rem 1rem;
+      border-radius: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+    }
+
+    .meta-tag i { font-size: 0.8rem; color: #4cc9f0; }
+
+    .category-badge {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0.4rem 1rem;
+      border-radius: 2rem;
+      color: white;
+      box-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.15);
+    }
+
+    .category-badge.doctor { background: linear-gradient(135deg, #4cc9f0, #06d6a0); }
+    .category-badge.kindergarten { background: linear-gradient(135deg, #ffd166, #ff6b9d); }
+    .category-badge.other { background: linear-gradient(135deg, #a06cd5, #4cc9f0); }
+
+    .btn-delete {
+      background: transparent;
+      border: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #c0a8d8;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+      border: 1px solid transparent;
+    }
+
+    .btn-delete:hover {
+      background: linear-gradient(135deg, #ffe0ec, #ffd6e0);
+      color: #ff6b9d;
+      border-color: rgba(255, 107, 157, 0.3);
+      transform: scale(1.08) rotate(5deg);
+    }
+
+    .empty-state {
+      padding: 3rem 2rem;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(255, 107, 157, 0.06), rgba(160, 108, 213, 0.06), rgba(76, 201, 240, 0.06));
+      border-radius: 2rem;
+      border: 2px dashed #d4bce8;
+      color: #7a93a8;
+      font-weight: 500;
+    }
+
+    .empty-state i {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ff6b9d, #a06cd5, #4cc9f0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .footer-note {
+      margin-top: 1.8rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #8ea4b8;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .footer-note i { color: #a06cd5; }
+
+    input[type="date"] { cursor: pointer; color-scheme: light; }
+    ::-webkit-calendar-picker-indicator { opacity: 0.5; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="header">
+      <div class="title-section">
+        <h1>
+          <i class="fas fa-calendar-heart"></i> Shared Agenda
+        </h1>
+        <div class="subhead">
+          <i class="fas fa-user-friends"></i> For you and your wife — everything in one place
+        </div>
+      </div>
+      <div class="shared-badge">
+        <i class="fas fa-share-alt"></i> Shared
+      </div>
+    </div>
+
+    <div class="stats-row" id="statsRow">
+      <div class="stat-card"><i class="fas fa-calendar-check"></i> <span id="totalCount">0</span> appointments</div>
+      <div class="stat-card"><i class="fas fa-clock"></i> <span id="upcomingCount">0</span> upcoming</div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-grid">
+        <div class="input-group">
+          <label><i class="fas fa-tag"></i> Title</label>
+          <input type="text" id="titleInput" placeholder="e.g., Doctor Müller" maxlength="60" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label><i class="fas fa-list"></i> Category</label>
+          <select id="categoryInput">
+            <option value="doctor">🩺 Doctor</option>
+            <option value="kindergarten">🧸 Kindergarten</option>
+            <option value="other">📌 Other</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label><i class="fas fa-calendar-day"></i> Date</label>
+          <input type="date" id="dateInput">
+        </div>
+        <button class="btn-primary" id="addBtn">
+          <i class="fas fa-plus-circle"></i> Add
+        </button>
+      </div>
+    </div>
+
+    <div class="list-header">
+      <h2><i class="fas fa-list-ul"></i> All appointments</h2>
+      <span id="listCount">0 entries</span>
+    </div>
+
+    <div id="appointmentsContainer" class="appointments-grid"></div>
+
+    <div class="footer-note">
+      <i class="fas fa-heart"></i> Made for the two of you
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const STORAGE_KEY = 'shared_appointments_v1';
+
+      const titleInput = document.getElementById('titleInput');
+      const categoryInput = document.getElementById('categoryInput');
+      const dateInput = document.getElementById('dateInput');
+      const addBtn = document.getElementById('addBtn');
+      const container = document.getElementById('appointmentsContainer');
+      const totalCountSpan = document.getElementById('totalCount');
+      const upcomingCountSpan = document.getElementById('upcomingCount');
+      const listCountSpan = document.getElementById('listCount');
+
+      function getTodayString() {
+        const d = new Date();
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+
+      dateInput.value = getTodayString();
+
+      function loadAppointments() {
+        try {
+          const stored = localStorage.getItem(STORAGE_KEY);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed)) return parsed;
+          }
+        } catch (e) {
+          console.warn('Failed to load appointments', e);
+        }
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const nextWeek = new Date(today);
+        nextWeek.setDate(nextWeek.getDate() + 7);
+
+        return [
+          { id: 'sample1', title: 'Pediatrician checkup', category: 'doctor', date: tomorrow.toISOString().split('T')[0] },
+          { id: 'sample2', title: 'Kindergarten parent evening', category: 'kindergarten', date: nextWeek.toISOString().split('T')[0] },
+          { id: 'sample3', title: 'Dentist (both)', category: 'doctor', date: today.toISOString().split('T')[0] },
+        ];
+      }
+
+      function saveAppointments(appointments) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(appointments));
+        } catch (e) {
+          console.warn('Failed to save appointments', e);
+        }
+      }
+
+      let appointments = loadAppointments();
+
+      function formatDate(dateStr) {
+        if (!dateStr) return 'No date';
+        const [year, month, day] = dateStr.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const compareDate = new Date(year, month - 1, day);
+
+        if (compareDate.getTime() === today.getTime()) return 'Today';
+        if (compareDate.getTime() === tomorrow.getTime()) return 'Tomorrow';
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      }
+
+      function isUpcoming(dateStr) {
+        if (!dateStr) return false;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const [year, month, day] = dateStr.split('-').map(Number);
+        const apptDate = new Date(year, month - 1, day);
+        return apptDate >= today;
+      }
+
+      function render() {
+        const sorted = [...appointments].sort((a, b) => {
+          if (!a.date) return 1;
+          if (!b.date) return -1;
+          return a.date.localeCompare(b.date);
+        });
+
+        const total = appointments.length;
+        const upcoming = appointments.filter(a => isUpcoming(a.date)).length;
+        totalCountSpan.textContent = total;
+        upcomingCountSpan.textContent = upcoming;
+        listCountSpan.textContent = total + (total === 1 ? ' entry' : ' entries');
+
+        container.innerHTML = '';
+
+        if (sorted.length === 0) {
+          const emptyDiv = document.createElement('div');
+          emptyDiv.className = 'empty-state';
+          emptyDiv.innerHTML = `
+            <i class="fas fa-calendar-plus"></i>
+            <p style="font-size: 1.1rem; margin-bottom: 0.3rem; color: #6a4f9c; font-weight: 700;">No appointments yet</p>
+            <p style="font-size: 0.9rem; opacity: 0.85;">Add your first doctor visit, kindergarten event, or any date.</p>
+          `;
+          container.appendChild(emptyDiv);
+          return;
+        }
+
+        sorted.forEach(appt => {
+          const item = document.createElement('div');
+          item.className = 'appointment-item';
+          item.dataset.id = appt.id;
+          item.dataset.category = appt.category || 'other';
+
+          let categoryIcon = 'fa-calendar-alt';
+          let categoryClass = 'other';
+          let categoryLabel = 'Other';
+
+          if (appt.category === 'doctor') {
+            categoryIcon = 'fa-stethoscope';
+            categoryClass = 'doctor';
+            categoryLabel = 'Doctor';
+          } else if (appt.category === 'kindergarten') {
+            categoryIcon = 'fa-child';
+            categoryClass = 'kindergarten';
+            categoryLabel = 'Kindergarten';
+          }
+
+          item.innerHTML = `
+            <div class="appointment-icon ${categoryClass}">
+              <i class="fas ${categoryIcon}"></i>
+            </div>
+            <div class="appointment-details">
+              <span class="appointment-title">${escapeHtml(appt.title) || 'Untitled'}</span>
+              <div class="appointment-meta">
+                <span class="meta-tag"><i class="fas fa-calendar"></i> ${formatDate(appt.date)}</span>
+                <span class="category-badge ${categoryClass}">${categoryLabel}</span>
+              </div>
+            </div>
+            <button class="btn-delete" title="Delete appointment" data-id="${appt.id}">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          `;
+
+          container.appendChild(item);
+        });
+
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.dataset.id;
+            deleteAppointment(id);
+          });
+        });
+      }
+
+      function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function addAppointment() {
+        const title = titleInput.value.trim();
+        const category = categoryInput.value;
+        const date = dateInput.value;
+
+        if (!title) {
+          titleInput.style.borderColor = '#ff6b9d';
+          titleInput.style.boxShadow = '0 0 0 4px rgba(255, 107, 157, 0.25)';
+          setTimeout(() => {
+            titleInput.style.borderColor = '#e2d4f0';
+            titleInput.style.boxShadow = 'none';
+          }, 1500);
+          titleInput.focus();
+          return;
+        }
+
+        if (!date) {
+          dateInput.style.borderColor = '#ff6b9d';
+          dateInput.style.boxShadow = '0 0 0 4px rgba(255, 107, 157, 0.25)';
+          setTimeout(() => {
+            dateInput.style.borderColor = '#e2d4f0';
+            dateInput.style.boxShadow = 'none';
+          }, 1500);
+          dateInput.focus();
+          return;
+        }
+
+        const newAppt = {
+          id: 'appt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+          title: title,
+          category: category,
+          date: date,
+        };
+
+        appointments.push(newAppt);
+        saveAppointments(appointments);
+        render();
+
+        titleInput.value = '';
+        titleInput.focus();
+      }
+
+      function deleteAppointment(id) {
+        appointments = appointments.filter(appt => appt.id !== id);
+        saveAppointments(appointments);
+        render();
+      }
+
+      addBtn.addEventListener('click', addAppointment);
+      titleInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addAppointment();
+        }
+      });
+
+      window.addEventListener('storage', (e) => {
+        if (e.key === STORAGE_KEY) {
+          try {
+            const newData = JSON.parse(e.newValue);
+            if (Array.isArray(newData)) {
+              appointments = newData;
+              render();
+            }
+          } catch (err) {
+            console.warn('Error syncing storage', err);
+          }
+        }
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
